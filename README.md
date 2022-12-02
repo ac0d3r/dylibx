@@ -1,5 +1,5 @@
 <div align="center" >
-    <img src="./docs/logo.jpg" />
+    <img src="./docs/logo.jpg" style="height:150px"/>
 </div>
 
 ## dylibx

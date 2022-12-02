@@ -11,7 +11,7 @@ jobs:
     env:
       CGO_ENABLED: 0
       BUILD_FLAGS: -trimpath -ldflags "-w -s" -o
-      BINARY_FILE: ./cmd/dylibx.go
+      BINARY_FILE: ./cmd/dylibx/dylibx.go
       BINARY_PRE: dylibx
     steps:
       - name: Check out code
