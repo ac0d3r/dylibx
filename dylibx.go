@@ -20,12 +20,13 @@ type Dylibx struct {
 }
 
 type AppVulnerable struct {
-	AppPath                  string
-	ExecutablePath           string
-	CodeSignFlags            string
-	DisableLibraryValidation bool
-	Injectable               bool
-	Dylibs                   []VulnItem
+	AppPath                       string
+	ExecutablePath                string
+	CodeSignFlags                 string
+	DisableLibraryValidation      bool
+	AllowDyldEnvironmentVariables bool
+	Injectable                    bool
+	Dylibs                        []VulnItem
 }
 
 type VulnItem struct {
@@ -69,12 +70,14 @@ func (d *Dylibx) ScanApp(path_ string) (*AppVulnerable, error) {
 	}
 	v.CodeSignFlags = fmt.Sprintf("0x%x", machoInfo[0].CodeSignFlags)
 	v.DisableLibraryValidation = machoInfo[0].CodeSignEntitlements.DisableLibraryValidation
+	v.AllowDyldEnvironmentVariables = machoInfo[0].CodeSignEntitlements.AllowDyldEnvironmentVariables
 
 	for _, m := range machoInfo {
 		d.ParseRPaths(m.LcRpaths, path.Dir(v.ExecutablePath))
 
 		if (d.IsRuntime(m.CodeSignFlags) ||
-			d.IsLibraryValidation(m.CodeSignFlags)) && !m.CodeSignEntitlements.DisableLibraryValidation {
+			d.IsLibraryValidation(m.CodeSignFlags)) &&
+			(!m.CodeSignEntitlements.DisableLibraryValidation || !m.CodeSignEntitlements.AllowDyldEnvironmentVariables) {
 			continue
 		}
 		v.Injectable = true

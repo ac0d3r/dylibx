@@ -16,7 +16,7 @@ func main() {
 	}
 	for _, vuln := range vulns {
 		if vuln.Injectable {
-			fmt.Printf("App: %s \nExecutablePath: %s\nCodeSignFlags: %s\nDisableLibraryValidation: %v\n\tInjectable: %v\n", vuln.AppPath, vuln.ExecutablePath, vuln.CodeSignFlags, vuln.DisableLibraryValidation, vuln.Injectable)
+			fmt.Printf("App: %s \nExecutablePath: %s\nCodeSignFlags: %s\nDisableLibraryValidation: %v\nAllowDyldEnvironmentVariables: %v\n\tInjectable: %v\n", vuln.AppPath, vuln.ExecutablePath, vuln.CodeSignFlags, vuln.DisableLibraryValidation, vuln.AllowDyldEnvironmentVariables, vuln.Injectable)
 		}
 	}
 	fmt.Println("-------------------------------------------------------------")

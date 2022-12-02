@@ -108,7 +108,8 @@ func parseMacho(m *macho.File) *MachOInfo {
 }
 
 type Entitlements struct {
-	DisableLibraryValidation bool `plist:"com.apple.security.cs.disable-library-validation"`
+	DisableLibraryValidation      bool `plist:"com.apple.security.cs.disable-library-validation"`
+	AllowDyldEnvironmentVariables bool `plist:"com.apple.security.cs.allow-dyld-environment-variables"`
 }
 
 func parseEntitlements(data string, e *Entitlements) {
