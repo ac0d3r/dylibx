@@ -11,8 +11,8 @@ jobs:
     env:
       CGO_ENABLED: 0
       BUILD_FLAGS: -trimpath -ldflags "-w -s" -o
-      BINARY_FILE: ./cmd/go-template.go
-      BINARY_PRE: go-template
+      BINARY_FILE: ./cmd/dylibx.go
+      BINARY_PRE: dylibx
     steps:
       - name: Check out code
         uses: actions/checkout@v2

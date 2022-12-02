@@ -2,21 +2,23 @@
     <img src="./docs/logo.jpg" />
 </div>
 
-## go-template
+## dylibx
+
+一键扫描查找可注入&劫持Dylib的应用程序。
 
 ## 安装
 - Go Install
 
-`go install github.com/ac0d3r/go-template/cmd/go-template@latest`
+`go install github.com/ac0d3r/dylibx/cmd/dylibx@latest`
 
 - Github Release
 
-前往 [releases](https://github.com/ac0d3r/go-template/releases) 下载合适的版本然后从命令行运行即可。
+前往 [releases](https://github.com/ac0d3r/dylibx/releases) 下载合适的版本然后从命令行运行即可。
 
 ## 用法
 
+一键开扫：
 ```
-$ ./go-template
-
+$ ./dylibx
 ...
 ```
