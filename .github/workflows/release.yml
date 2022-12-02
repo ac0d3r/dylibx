@@ -22,7 +22,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Make release dir
         run: mkdir release
@@ -30,21 +30,6 @@ jobs:
       - name: Install Package
         run: |
           sudo apt install -y zip
-
-      - name: Build linux release
-        env:
-          GOOS: linux
-        run: |
-          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=amd64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_amd64 ${{ env.BINARY_FILE }}
-          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=386   go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_386   ${{ env.BINARY_FILE }}
-          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=arm64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_arm64 ${{ env.BINARY_FILE }}
-
-      - name: Build windows release
-        env:
-          GOOS: windows
-        run: |
-          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=amd64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_windows_amd64.exe ${{ env.BINARY_FILE }}
-          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=386   go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_windows_386.exe   ${{ env.BINARY_FILE }}
 
       - name: Build darwin release
         env:
@@ -66,11 +51,6 @@ jobs:
           draft: true
           body_path: .github/workflows/release.md
           files: |
-            release/${{ env.BINARY_PRE }}_linux_amd64.zip
-            release/${{ env.BINARY_PRE }}_linux_386.zip
-            release/${{ env.BINARY_PRE }}_linux_arm64.zip
-            release/${{ env.BINARY_PRE }}_windows_amd64.exe.zip
-            release/${{ env.BINARY_PRE }}_windows_386.exe.zip
             release/${{ env.BINARY_PRE }}_darwin_amd64.zip
             release/${{ env.BINARY_PRE }}_darwin_arm64.zip
             release/sha256.txt
