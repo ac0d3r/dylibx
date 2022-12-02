@@ -1,0 +1,76 @@
+name: Build And Release🎉
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CGO_ENABLED: 0
+      BUILD_FLAGS: -trimpath -ldflags "-w -s" -o
+      BINARY_FILE: ./cmd/go-template.go
+      BINARY_PRE: go-template
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Make release dir
+        run: mkdir release
+
+      - name: Install Package
+        run: |
+          sudo apt install -y zip
+
+      - name: Build linux release
+        env:
+          GOOS: linux
+        run: |
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=amd64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_amd64 ${{ env.BINARY_FILE }}
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=386   go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_386   ${{ env.BINARY_FILE }}
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=arm64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_linux_arm64 ${{ env.BINARY_FILE }}
+
+      - name: Build windows release
+        env:
+          GOOS: windows
+        run: |
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=amd64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_windows_amd64.exe ${{ env.BINARY_FILE }}
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=386   go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_windows_386.exe   ${{ env.BINARY_FILE }}
+
+      - name: Build darwin release
+        env:
+          GOOS: darwin
+        run: |
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=amd64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE}}_darwin_amd64 ${{ env.BINARY_FILE }}
+          CGO_ENABLED=${{ env.CGO_ENABLED }} GOARCH=arm64 go build ${{ env.BUILD_FLAGS }} release/${{ env.BINARY_PRE }}_darwin_arm64 ${{ env.BINARY_FILE }}
+
+      - name: Zip Release
+        run: |
+          cd release
+          find . -name '${{ env.BINARY_PRE }}_*' -type f -exec zip {}.zip {} \; -exec rm {} \;
+          find . -name '${{ env.BINARY_PRE }}_*.zip' -type f -exec shasum -a 256 {} \; > sha256.txt
+          ls -alh
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          body_path: .github/workflows/release.md
+          files: |
+            release/${{ env.BINARY_PRE }}_linux_amd64.zip
+            release/${{ env.BINARY_PRE }}_linux_386.zip
+            release/${{ env.BINARY_PRE }}_linux_arm64.zip
+            release/${{ env.BINARY_PRE }}_windows_amd64.exe.zip
+            release/${{ env.BINARY_PRE }}_windows_386.exe.zip
+            release/${{ env.BINARY_PRE }}_darwin_amd64.zip
+            release/${{ env.BINARY_PRE }}_darwin_arm64.zip
+            release/sha256.txt
